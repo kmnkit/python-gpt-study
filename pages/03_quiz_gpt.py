@@ -24,6 +24,12 @@ st.set_page_config(
     page_icon="📝",
 )
 
+if "api_key" not in st.session_state:
+    st.session_state["api_key"] = None
+
+if "api_key_bool" not in st.session_state:
+    st.session_state["api_key_bool"] = False
+
 st.title("QuizGPT")
 
 
@@ -230,26 +236,51 @@ def wiki_search(term):
     return docs
 
 
-with st.sidebar:
-    docs = None
-    topic = None
-    choice = st.selectbox(
-        "Choose what you want to use.",
-        (
-            "File",
-            "Wikipedia Article",
-        ),
-    )
-    if choice == "File":
-        if file := st.file_uploader(
-            "Upload a .docx, .txt or .pdf file",
-            type=["pdf", "txt", "docx"],
-        ):
-            docs = split_file(file)
+def save_api_key(api_key):
+    st.session_state["api_key"] = api_key
+    st.session_state["api_key_bool"] = True
 
-    else:
-        if topic := st.text_input("Name of the article"):
-            docs = wiki_search(topic)
+
+docs = None
+topic = None
+
+with st.sidebar:
+
+    api_key = st.text_input(
+        "자신의 OPENAI_API_KEY를 입력해 주세요.",
+        disabled=st.session_state["api_key"] is not None,
+    ).strip()
+
+    if api_key:
+        save_api_key(api_key)
+        st.write("API_KEY가 저장되었습니다.")
+
+    if button := st.button("저장"):
+        save_api_key(api_key)
+        if api_key == "":
+            st.write("API_KEY를 넣어주세요.")
+
+    if (st.session_state["api_key_bool"] == True) and (
+        st.session_state["api_key"] != None
+    ):
+
+        choice = st.selectbox(
+            "Choose what you want to use.",
+            (
+                "File",
+                "Wikipedia Article",
+            ),
+        )
+        if choice == "File":
+            if file := st.file_uploader(
+                "Upload a .docx, .txt or .pdf file",
+                type=["pdf", "txt", "docx"],
+            ):
+                docs = split_file(file)
+
+        else:
+            if topic := st.text_input("Name of the article"):
+                docs = wiki_search(topic)
 
 
 if not docs:
