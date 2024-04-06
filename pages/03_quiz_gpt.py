@@ -45,7 +45,7 @@ questions_prompt = ChatPromptTemplate.from_messages(
             """
                 You are a helpful assistant that is role playing as a teacher.
                     
-                Based ONLY on the following context make 10 (TEN) questions minimum to test the user's knowledge about the text.
+                Based ONLY on the following context make 10 (TEN) questions to test the user's knowledge about the text.
                 
                 Each question should have 4 answers, three of them must be incorrect and one should be correct.
                     
@@ -232,6 +232,7 @@ def wiki_search(term):
 
 with st.sidebar:
     docs = None
+    topic = None
     choice = st.selectbox(
         "Choose what you want to use.",
         (
