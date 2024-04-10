@@ -155,7 +155,7 @@ with st.sidebar:
         save_api_key(api_key)
         st.write("API_KEY가 저장되었습니다.")
 
-    if button := st.button("저장"):
+    if button := st.button("저장", st.session_state["key"] is not None):
         save_api_key(api_key)
         if api_key == "":
             st.write("API_KEY를 넣어주세요.")
